@@ -20,6 +20,7 @@ type
 const PCAP_ERRBUF_SIZE* = 256
 
 # https://github.com/the-tcpdump-group/libpcap/blob/master/pcap-bpf.c#L234
+# http://www.tcpdump.org/linktypes.html
 const
   DLT_PRISM_HEADER* = 119
   DLT_AIRONET_HEADER* = 120
@@ -104,6 +105,9 @@ proc pcap_set_datalink*(pcap: pcap_t, val: cint): cint
   {.cdecl, dynlib: libName, importc.}
 
 proc pcap_geterr*(pcap: pcap_t): cstring
+  {.cdecl, dynlib: libName, importc.}
+
+proc pcap_datalink*(pcap: pcap_t): cint
   {.cdecl, dynlib: libName, importc.}
 
 proc checkError*(pcap: pcap_t, ret: cint) =
