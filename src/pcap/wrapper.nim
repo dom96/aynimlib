@@ -110,6 +110,9 @@ proc pcap_geterr*(pcap: pcap_t): cstring
 proc pcap_datalink*(pcap: pcap_t): cint
   {.cdecl, dynlib: libName, importc.}
 
+proc pcap_sendpacket*(pcap: pcap_t, buf: cstring, size: cint): cint
+  {.cdecl, dynlib: libName, importc.}
+
 proc checkError*(pcap: pcap_t, ret: cint) =
   if ret < 0:
     raise newException(OSError, $pcap_geterr(pcap))

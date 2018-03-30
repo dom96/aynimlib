@@ -39,9 +39,29 @@ proc readPacket*(ap: AsyncPcap): Future[string] =
       retFuture.complete(data)
       result = true
     else:
-      ap.pcap.checkError(ret)
+      retFuture.fail(newException(OSError, $pcap_geterr(ap.pcap)))
+      result = true
 
   if not cb(ap.fd):
     addRead(ap.fd, cb)
+
+  return retFuture
+
+proc writePacket*(ap: AsyncPcap, data: string): Future[void] =
+  var retFuture = newFuture[void]("asyncpcap.writePacket")
+
+  var data = data
+  proc cb(fd: AsyncFd): bool =
+    let ret = pcap_sendpacket(ap.pcap, addr data[0], data.len.cint)
+    case ret
+    of 0:
+      retFuture.complete()
+      result = true
+    else:
+      retFuture.fail(newException(OSError, $pcap_geterr(ap.pcap)))
+      result = true
+
+  if not cb(ap.fd):
+    addWrite(ap.fd, cb)
 
   return retFuture
